@@ -1,17 +1,23 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
+
 const {
   postsGet,
   postsUpdate,
   postsDelete,
   postsCreate,
-} = require('./posts.controllers');
+  fetchOneById,
+} = require("./posts.controllers");
 
-router.get('/', postsGet);
-router.post('/', postsCreate);
+router.param("postId", async (req, res, next, postId) => {
+  const post = await fetchOneById(next, postId);
+  req.post = post;
+  next();
+});
 
-router.delete('/:postId', postsDelete);
-
-router.put('/:postId', postsUpdate);
+router.get("/", postsGet);
+router.post("/", postsCreate);
+router.delete("/:postId", postsDelete);
+router.put("/:postId", postsUpdate);
 
 module.exports = router;
